@@ -33,16 +33,20 @@ First, check if `docs/CODEBASE_MAP.md` already exists:
 
 ### Step 2: Scan the Codebase
 
-Run the scanner script to get an overview:
+Run the scanner script to get an overview. Use the `${CLAUDE_PLUGIN_ROOT}` variable to reference the script:
 
 ```bash
-uv run ~/.claude/skills/cartographer/scripts/scan-codebase.py . --format json
+python3 ${CLAUDE_PLUGIN_ROOT}/skills/cartographer/scripts/scan-codebase.py . --format json
 ```
 
-If tiktoken not installed:
+If tiktoken is not installed, install it first:
 ```bash
-uv pip install tiktoken && uv run ~/.claude/skills/cartographer/scripts/scan-codebase.py . --format json
+pip install tiktoken
+# or with uv:
+uv pip install tiktoken
 ```
+
+Then run the scanner.
 
 The output provides:
 - Complete file tree with token counts per file
@@ -221,6 +225,8 @@ Always use Sonnet subagents for maximum file coverage.
 
 **Scanner fails with tiktoken error:**
 ```bash
+pip install tiktoken
+# or with uv:
 uv pip install tiktoken
 ```
 
