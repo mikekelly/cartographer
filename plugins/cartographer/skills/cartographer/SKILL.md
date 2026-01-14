@@ -5,7 +5,7 @@ description: Maps and documents codebases of any size by orchestrating parallel 
 
 # Cartographer
 
-Maps codebases of any size using parallel Sonnet subagents with 1M token context windows.
+Maps codebases of any size using parallel Sonnet subagents.
 
 **CRITICAL: Opus orchestrates, Sonnet reads.** Never have Opus read codebase files directly. Always delegate file reading to Sonnet subagents - even for small codebases. Opus plans the work, spawns subagents, and synthesizes their reports.
 
@@ -71,21 +71,22 @@ The output provides:
 
 Analyze the scan output to divide work among subagents:
 
-**Token budget per subagent:** ~500,000 tokens (safe margin under Sonnet's 1M limit)
+**Token budget per subagent:** ~150,000 tokens (safe margin under Sonnet's 200k context limit)
 
 **Grouping strategy:**
 1. Group files by directory/module (keeps related code together)
 2. Balance token counts across groups
-3. Aim for 3-8 subagents depending on codebase size
+3. Aim for more subagents with smaller chunks (150k max each)
 
 **For small codebases (<100k tokens):** Still use a single Sonnet subagent. Opus orchestrates, Sonnet reads - never have Opus read the codebase directly.
 
 **Example assignment:**
 
 ```
-Subagent 1: src/api/, src/middleware/ (~450k tokens)
-Subagent 2: src/components/, src/hooks/ (~480k tokens)
-Subagent 3: src/lib/, src/utils/, tests/ (~420k tokens)
+Subagent 1: src/api/, src/middleware/ (~120k tokens)
+Subagent 2: src/components/, src/hooks/ (~140k tokens)
+Subagent 3: src/lib/, src/utils/ (~100k tokens)
+Subagent 4: tests/, docs/ (~80k tokens)
 ```
 
 ### Step 4: Spawn Sonnet Subagents in Parallel
@@ -267,11 +268,11 @@ When updating an existing map:
 
 | Model | Context Window | Safe Budget per Subagent |
 |-------|---------------|-------------------------|
-| Sonnet | 1,000,000 | 500,000 |
+| Sonnet | 200,000 | 150,000 |
 | Opus | 200,000 | 100,000 |
 | Haiku | 200,000 | 100,000 |
 
-Always use Sonnet subagents for maximum file coverage.
+Always use Sonnet subagents - best balance of capability and cost for file analysis.
 
 ## Troubleshooting
 
